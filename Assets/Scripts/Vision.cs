@@ -57,6 +57,8 @@ public class Vision : MonoBehaviour {
 		if (mainVision == false) {
 			castRange = peripheralRange;
 		}
+		RaycastHit2D hit;
+
 		//for (int i = -2; i <= 2; i++) {
 		//	if (Physics.Raycast (new Ray(this.gameObject.transform.position, vector), castRange, hit) = true ){
 		//		if (hit.collider.CompareTag("player") = true){
@@ -64,13 +66,30 @@ public class Vision : MonoBehaviour {
 		//		}
 		//	}
 		//}
-		RaycastHit2D hit;
-		if ((hit = Physics2D.Raycast (transform.position, vector, castRange)).collider != null){
+
+		if ((hit = raycast (vector, castRange)).collider != null){ //if we hit something
 			if (hit.collider.CompareTag("Player") == true){
 				isVisible = true;
 			}
 		}		
 		return isVisible;
-		//return true;
 	}
+
+
+	RaycastHit2D raycast(Vector2 vector, float castRange) {
+		//scale the vision vector to cast range for line drawing
+		vector.Normalize ();
+		vector *= castRange;
+		//fire a raycast in the vector direction at the cast range
+		RaycastHit2D hit = Physics2D.Raycast (transform.position, vector, castRange);
+		if (hit.collider == null) { //if we don't hit anything draw a debug line to the end of the vision range
+			Debug.DrawLine (transform.position, transform.position + new Vector3 (vector.x, vector.y), Color.red, 0.5f);
+		} else { //if we hit something draw a debug line to it
+			Debug.DrawLine (transform.position, new Vector3(hit.point.x, hit.point.y), Color.red, 0.5f);
+		}
+		return hit;
+
+	}
+
+
 }
