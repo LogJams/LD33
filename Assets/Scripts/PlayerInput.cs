@@ -10,7 +10,7 @@ public class PlayerInput : MonoBehaviour {
 	float dragDist = 0.5f;
 	DumpBody van;
 	//player movement speed
-	float speed = 3; //m/s
+	float speed = 2.5f; //m/s
 
 	//list of targets in range to knock out
 	List<GameObject> targets;

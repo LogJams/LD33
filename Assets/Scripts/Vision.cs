@@ -84,7 +84,6 @@ public class Vision : MonoBehaviour {
 		RaycastHit2D hit;
 
 		for (int i = -4; i <= 4; i+=2) {
-			Vector2 temp = Quaternion.Euler(0,0,i) * vector;
 			if ((hit = raycast (Quaternion.Euler(0,0,i) * vector, castRange)).collider != null){ //if we hit something
 				if (hit.collider.CompareTag("Player") == true || hit.collider.CompareTag("Body") == true){
 					hitCount++;

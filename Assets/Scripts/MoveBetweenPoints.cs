@@ -8,7 +8,7 @@ public class MoveBetweenPoints : MonoBehaviour {
 
 	int currentWaypoint;
 
-	float speed = 2f;
+	float speed = 0.75f;
 	float rotSpeed = 5;
 
 	float desiredRot; //desired rotation at waypoint
