@@ -60,6 +60,8 @@ public class PlayerInput : MonoBehaviour {
 					box.isTrigger = true;
 					//disable their behavior script
 					draggedBody.GetComponent<Behavior>().enabled = false;
+					//tag them as a body
+					draggedBody.tag = "Body";
 				}
 			} else if (draggedBody != null) { //drop the body
 				if (van.kill (draggedBody)) { //try to drop them in the van
