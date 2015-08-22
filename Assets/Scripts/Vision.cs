@@ -13,9 +13,11 @@ public class Vision : MonoBehaviour {
 	// range in (?) unts and angle of main vision
 	float mainRange = 3;
 	float mainAngle = 25;
+	// the angle to the NPC's front of vision
+	public float angleToFront = 0f;
 	// list of GameObjects that are in the NPC's vision range
 	List<GameObject> inVisionRange;
-	List<GameObject> inLineOfSight;
+	public List<GameObject> inLineOfSight;
 	
 	void Start () {
 		inPeripheral = false;
@@ -30,7 +32,7 @@ public class Vision : MonoBehaviour {
 		inMain = false;
 		Vector2 vector;
 		// the base angle of the NPC's vision
-		float angleToFront = transform.rotation.eulerAngles.z;
+		angleToFront = transform.rotation.eulerAngles.z;
 		// angle between the NPC and teh target
 		float angle;
 

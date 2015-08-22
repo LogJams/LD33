@@ -16,11 +16,15 @@ public class Behavior : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		timeSinceLastAction += Time.deltaTime;
-		if (vision.inMain == true && timeSinceLastAction > timeBetweenActions){
-				Detect ();
+		if (vision.inMain == true && timeSinceLastAction > timeBetweenActions) {
+			Detect ();
 		} else if (vision.inPeripheral == true) {
-			TurnToInvestigate();
-		}
+			TurnToInvestigate ();
+		} else if(vision.inMain == false){
+			if (this.gameObject.GetComponent<MoveBetweenPoints>()!= null ){
+				this.gameObject.GetComponent<MoveBetweenPoints>().enabled = true;
+			}
+		} 
 	}
 
 	void Detect (){
@@ -44,6 +48,27 @@ public class Behavior : MonoBehaviour {
 
 	void TurnToInvestigate(){
 		Debug.Log ("turning");
+		GameObject closestTarget = null;
+		float closestDisctance = float.MaxValue;
+		if (this.gameObject.GetComponent<MoveBetweenPoints>()!= null ){
+			this.gameObject.GetComponent<MoveBetweenPoints>().enabled = false;
+		}
+		foreach (GameObject target in vision.inLineOfSight){
+			if (target.CompareTag("Player") == true) {
+				closestTarget = target;
+				break;
+			} else {
+				Vector2 vector = target.transform.position - this.gameObject.transform.position;
+				if (vector.magnitude < closestDisctance) {
+					closestTarget = target;
+				}
+			}
+		}
+		Vector2 sightVector = closestTarget.transform.position - this.gameObject.transform.position;
+		// get angle of vision and compare between main and peripheral angles to determine what form of vision is being used
+		// raycast accordingly
+		float angle = Mathf.Rad2Deg * Mathf.Atan2(sightVector.y, sightVector.x) - vision.angleToFront;
+		transform.Rotate (transform.eulerAngles, -angle);
 	}
 
 }
