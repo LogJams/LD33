@@ -101,7 +101,7 @@ public class PlayerInput : MonoBehaviour {
 	}
 
 	void OnTriggerEnter2D(Collider2D other) {
-		if (other.CompareTag ("Human") && !targets.Contains(other.gameObject)) {
+		if ((other.CompareTag ("Human") || other.CompareTag ("Body")) && !targets.Contains(other.gameObject)) {
 			targets.Add (other.gameObject);
 		}
 	}

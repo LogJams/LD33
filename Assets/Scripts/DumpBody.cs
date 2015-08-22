@@ -23,13 +23,13 @@ public class DumpBody : MonoBehaviour {
 	}
 
 	void OnTriggerEnter2D(Collider2D other) {
-		if (other.CompareTag ("Human")) {
+		if (other.CompareTag ("Human") || other.CompareTag ("Body")) {
 			inRange.Add (other.gameObject);
 		}
 	}
 
 	void OnTriggerExit2D(Collider2D other) {
-		if (other.CompareTag ("Human") && inRange.Contains (other.gameObject)) {
+		if ((other.CompareTag ("Human") || other.CompareTag ("Body")) && inRange.Contains (other.gameObject)) {
 			inRange.Remove(other.gameObject);
 		}
 	}
