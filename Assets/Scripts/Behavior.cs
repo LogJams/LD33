@@ -7,6 +7,10 @@ public class Behavior : MonoBehaviour {
 	public bool isPolice = false;
 	float timeSinceLastAction;
 		public float timeBetweenActions = 15f;
+
+	float rotSpeed = 2;//rotation speed
+
+
 	// Use this for initialization
 	void Start () {
 		vision = GetComponent<Vision> ();
@@ -18,7 +22,7 @@ public class Behavior : MonoBehaviour {
 		timeSinceLastAction += Time.deltaTime;
 		if (vision.inMain == true && timeSinceLastAction > timeBetweenActions) {
 			Detect ();
-		} else if (vision.inPeripheral == true) {
+		} else if (vision.inPeripheral == true || vision.inMain == true) {
 			TurnToInvestigate ();
 		} else if(vision.inMain == false){
 			if (this.gameObject.GetComponent<MoveBetweenPoints>()!= null ){
@@ -47,7 +51,6 @@ public class Behavior : MonoBehaviour {
 	}
 
 	void TurnToInvestigate(){
-		Debug.Log ("turning");
 		GameObject closestTarget = null;
 		float closestDisctance = float.MaxValue;
 		if (this.gameObject.GetComponent<MoveBetweenPoints>()!= null ){
@@ -67,8 +70,8 @@ public class Behavior : MonoBehaviour {
 		Vector2 sightVector = closestTarget.transform.position - this.gameObject.transform.position;
 		// get angle of vision and compare between main and peripheral angles to determine what form of vision is being used
 		// raycast accordingly
-		float angle = Mathf.Rad2Deg * Mathf.Atan2(sightVector.y, sightVector.x) - vision.angleToFront;
-		transform.Rotate (transform.eulerAngles, -angle);
+		float angle = Mathf.Rad2Deg * Mathf.Atan2 (sightVector.y, sightVector.x);
+		transform.rotation = Quaternion.Lerp (transform.rotation, Quaternion.Euler (new Vector3 (0, 0, angle)), Time.deltaTime * rotSpeed);;
 	}
 
 }

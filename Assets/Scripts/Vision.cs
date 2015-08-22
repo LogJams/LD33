@@ -37,7 +37,7 @@ public class Vision : MonoBehaviour {
 		float angle;
 
 		if (angleToFront > 180){
-			angleToFront = 180 - angleToFront;
+			angleToFront = angleToFront - 360;
 		}
 		inLineOfSight.Clear ();
 		// check each target that is in vision range to determine if it can be seen
@@ -51,9 +51,11 @@ public class Vision : MonoBehaviour {
 			// get angle of vision and compare between main and peripheral angles to determine what form of vision is being used
 			// raycast accordingly
 			angle = Mathf.Rad2Deg * Mathf.Atan2(vector.y, vector.x) - angleToFront;
+			if (angle > 180) {angle -= 360;}
+			if (angle < -180) {angle += 360;}
 			if (angle <= mainAngle && angle >= -mainAngle) {
 				inMain = FireRayCast(target, vector, true);
-			} else if (angle - (transform.rotation.z * Mathf.Rad2Deg) <= peripheralAngle && angle - (transform.rotation.z * Mathf.Rad2Deg) >= -peripheralAngle){
+			} else if (angle <= peripheralAngle && angle >= -peripheralAngle){
 				inPeripheral = FireRayCast(target, vector, false);
 			}
 		}
@@ -64,14 +66,12 @@ public class Vision : MonoBehaviour {
 		if (inVisionRange.Contains(collider.gameObject) == false && collider.isTrigger == false
 		    && (collider.CompareTag("Player") == true || collider.CompareTag("Body") == true)){
 			inVisionRange.Add(collider.gameObject);
-			Debug.Log("Enter");
 		}
 	}
 
 	void OnTriggerExit2D(Collider2D collider){
 		if (inVisionRange.Contains(collider.gameObject) == true && collider.isTrigger == false){
 			inVisionRange.Remove(collider.gameObject);
-			Debug.Log("Exit");
 		}
 	}
 
