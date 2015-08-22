@@ -14,12 +14,14 @@ public class Vision : MonoBehaviour {
 	float mainRange = 3;
 	float mainAngle = 25;
 	// list of GameObjects that are in the NPC's vision range
-	List<GameObject> inVision;
+	List<GameObject> inVisionRange;
+	List<GameObject> inLineOfSight;
 	
 	void Start () {
 		inPeripheral = false;
 		inMain = false;
-		inVision = new List<GameObject> ();
+		inVisionRange = new List<GameObject> ();
+		inLineOfSight = new List<GameObject> ();
 	}
 
 	void Update () {
@@ -36,9 +38,9 @@ public class Vision : MonoBehaviour {
 			angleToFront = 180 - angleToFront;
 		}
 		// check each target that is in vision range to determine if it can be seen
-		foreach (GameObject target in inVision){
+		foreach (GameObject target in inVisionRange){
 			if (target == null) {
-				inVision.Remove(target);
+				inVisionRange.Remove(target);
 				break;
 			}
 			// get vector between NPC and targer
@@ -56,15 +58,16 @@ public class Vision : MonoBehaviour {
 	}
 
 	void OnTriggerEnter2D(Collider2D collider) {
-		if (inVision.Contains(collider.gameObject) == false && collider.isTrigger == false){
-			inVision.Add(collider.gameObject);
+		if (inVisionRange.Contains(collider.gameObject) == false && collider.isTrigger == false
+		    && (collider.CompareTag("Player") == true || collider.CompareTag("Body") == true)){
+			inVisionRange.Add(collider.gameObject);
 			Debug.Log("Enter");
 		}
 	}
 
 	void OnTriggerExit2D(Collider2D collider){
-		if (inVision.Contains(collider.gameObject) == true && collider.isTrigger == false){
-			inVision.Remove(collider.gameObject);
+		if (inVisionRange.Contains(collider.gameObject) == true && collider.isTrigger == false){
+			inVisionRange.Remove(collider.gameObject);
 			Debug.Log("Exit");
 		}
 	}
@@ -81,7 +84,7 @@ public class Vision : MonoBehaviour {
 		for (int i = -4; i <= 4; i+=2) {
 			Vector2 temp = Quaternion.Euler(0,0,i) * vector;
 			if ((hit = raycast (Quaternion.Euler(0,0,i) * vector, castRange)).collider != null){ //if we hit something
-				if (hit.collider.CompareTag("Player") == true){
+				if (hit.collider.CompareTag("Player") == true || hit.collider.CompareTag("Body") == true){
 					hitCount++;
 				}
 			}	

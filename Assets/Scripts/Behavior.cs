@@ -16,6 +16,12 @@ public class Behavior : MonoBehaviour {
 			Debug.Log("DETECTED");
 		} else if (vision.inPeripheral == true) {
 			Debug.Log("IN PERIPHERAL");
+			//
 		}
 	}
+
+	void Detect (){
+
+	}
+
 }
