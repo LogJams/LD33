@@ -47,7 +47,6 @@ public class MoveBetweenPoints : MonoBehaviour {
 
 			//set desired rotation
 			desiredRot = Mathf.Atan2 (velocity.y, velocity.x) * Mathf.Rad2Deg;
-			Debug.Log (desiredRot);
 		}
 	}
 
