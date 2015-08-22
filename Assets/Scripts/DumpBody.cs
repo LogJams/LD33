@@ -1,24 +1,36 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class DumpBody : MonoBehaviour {
 
 	int bodyCount;
 
+	List<GameObject> inRange;
+
 	// Use this for initialization
 	void Start () {
-	
+		inRange = new List<GameObject> ();
 	}
 	
-	// Update is called once per frame
-	void Update () {
-	
+	public bool kill(GameObject human) {
+		bool contains = inRange.Contains (human);
+		if (contains) {
+			inRange.Remove(human);
+			bodyCount ++;
+		}
+		return contains;
 	}
 
 	void OnTriggerEnter2D(Collider2D other) {
-		if (!other.CompareTag ("Player")) {
-			Destroy(other.gameObject);
-			bodyCount ++;
+		if (other.CompareTag ("Human")) {
+			inRange.Add (other.gameObject);
+		}
+	}
+
+	void OnTriggerExit2D(Collider2D other) {
+		if (other.CompareTag ("Human") && inRange.Contains (other.gameObject)) {
+			inRange.Remove(other.gameObject);
 		}
 	}
 }

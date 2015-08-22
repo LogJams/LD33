@@ -7,7 +7,8 @@ public class PlayerInput : MonoBehaviour {
 	//is the player currently dragging a body?
 	public bool dragging;
 	public GameObject draggedBody;
-	float dragDist = 1.5f;
+	float dragDist = 0.5f;
+	DumpBody van;
 	//player movement speed
 	float speed = 3; //m/s
 
@@ -20,6 +21,10 @@ public class PlayerInput : MonoBehaviour {
 
 	//players rigidbody - used for movement and collision
 	Rigidbody2D body;
+
+	void Awake() {
+		van = GameObject.FindGameObjectWithTag ("Finish").GetComponent<DumpBody> ();
+	}
 
 	//Initialize variables
 	void Start () {
@@ -47,9 +52,20 @@ public class PlayerInput : MonoBehaviour {
 				draggedBody = nearest;
 				if (draggedBody != null) { //if we grabbed someone
 					draggedBody.GetComponent<Rigidbody2D>().collisionDetectionMode = CollisionDetectionMode2D.None;
+					//destroy their colliders
+					foreach (Collider2D c in draggedBody.GetComponents<Collider2D>()) {
+						Destroy (c);
+					}
+					BoxCollider2D box = draggedBody.AddComponent <BoxCollider2D>();
+					box.isTrigger = true;
 				}
 			} else if (draggedBody != null) { //drop the body
-				draggedBody.GetComponent<Rigidbody2D>().collisionDetectionMode = CollisionDetectionMode2D.Continuous;
+				if (van.kill (draggedBody)) { //try to drop them in the van
+					targets.Remove (draggedBody); //remove them from the list of things that can be grabbed
+					Destroy (draggedBody);
+				} else { //if not, drop them on the floor
+					draggedBody.GetComponent<Rigidbody2D>().collisionDetectionMode = CollisionDetectionMode2D.Continuous;
+				}
 				draggedBody = null;
 			}
 		}
@@ -76,11 +92,12 @@ public class PlayerInput : MonoBehaviour {
 		//move whatever we're dragging
 		if (draggedBody != null) {
 			draggedBody.transform.position = transform.position + transform.right * dragDist;
+			draggedBody.transform.rotation = transform.rotation;
 		}
 	}
 
 	void OnTriggerEnter2D(Collider2D other) {
-		if (other.CompareTag ("Human")) {
+		if (other.CompareTag ("Human") && !targets.Contains(other.gameObject)) {
 			targets.Add (other.gameObject);
 		}
 	}
