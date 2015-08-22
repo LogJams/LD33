@@ -37,6 +37,7 @@ public class Vision : MonoBehaviour {
 		if (angleToFront > 180){
 			angleToFront = 180 - angleToFront;
 		}
+		inLineOfSight.Clear ();
 		// check each target that is in vision range to determine if it can be seen
 		foreach (GameObject target in inVisionRange){
 			if (target == null) {
@@ -49,9 +50,9 @@ public class Vision : MonoBehaviour {
 			// raycast accordingly
 			angle = Mathf.Rad2Deg * Mathf.Atan2(vector.y, vector.x) - angleToFront;
 			if (angle <= mainAngle && angle >= -mainAngle) {
-				inMain = FireRayCast(vector, true);
+				inMain = FireRayCast(target, vector, true);
 			} else if (angle - (transform.rotation.z * Mathf.Rad2Deg) <= peripheralAngle && angle - (transform.rotation.z * Mathf.Rad2Deg) >= -peripheralAngle){
-				inPeripheral = FireRayCast(vector, false);
+				inPeripheral = FireRayCast(target, vector, false);
 			}
 		}
 
@@ -72,7 +73,8 @@ public class Vision : MonoBehaviour {
 		}
 	}
 
-	bool FireRayCast(Vector2 vector, bool mainVision){
+	bool FireRayCast(GameObject target, Vector2 vector, bool mainVision){
+		bool inVision = false;
 		int hitCount = 0;
 		float castRange = mainRange;
 
@@ -89,7 +91,11 @@ public class Vision : MonoBehaviour {
 				}
 			}	
 		}
-		return hitCount > 1;
+		inVision = hitCount > 1;
+		if (inVision && inLineOfSight.Contains (target) == false) {
+			inLineOfSight.Add(target);
+		}
+		return inVision;
 	}
 
 

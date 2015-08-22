@@ -4,6 +4,7 @@ using System.Collections;
 [RequireComponent(typeof(Vision))]
 public class Behavior : MonoBehaviour {
 	Vision vision;
+	public bool isPolice = false;
 
 	// Use this for initialization
 	void Start () {
@@ -13,14 +14,22 @@ public class Behavior : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		if (vision.inMain == true){
-			Debug.Log("DETECTED");
+			Detect ();
 		} else if (vision.inPeripheral == true) {
 			Debug.Log("IN PERIPHERAL");
-			//
+			TurnToInvestigate();
 		}
 	}
 
 	void Detect (){
+		if (isPolice == true) {
+
+		} else {
+
+		}
+	}
+
+	void TurnToInvestigate(){
 
 	}
 
