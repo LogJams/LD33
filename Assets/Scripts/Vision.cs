@@ -27,6 +27,10 @@ public class Vision : MonoBehaviour {
 		float angle;
 
 		foreach (GameObject target in inVision){
+			if (target == null) {
+				inVision.Remove(target);
+				break;
+			}
 			vector = target.transform.position - this.gameObject.transform.position;
 			angle = Mathf.Rad2Deg * Mathf.Atan2(vector.y, vector.x) - transform.rotation.eulerAngles.z;
 			Debug.Log (angle);
