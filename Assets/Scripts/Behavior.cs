@@ -6,7 +6,7 @@ public class Behavior : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		vision = this.gameObject.GetComponent<Vision> ();
+		vision = GetComponent<Vision> ();
 	}
 	
 	// Update is called once per frame
