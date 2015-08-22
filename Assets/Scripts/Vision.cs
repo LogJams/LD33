@@ -29,10 +29,9 @@ public class Vision : MonoBehaviour {
 		foreach (GameObject target in inVision){
 			vector = target.transform.position - this.gameObject.transform.position;
 			angle = Mathf.Rad2Deg * Mathf.Atan2(vector.y, vector.x);
-			angle = (angle + 360) % 360;
-			if (angle <= mainAngle) {
+			if (angle <= mainAngle && angle >= -mainAngle) {
 				inMain = FireRayCast(vector, true);
-			} else if (angle <= peripheralAngle){
+			} else if (angle <= peripheralAngle && angle >= -peripheralAngle){
 				inPeripheral = FireRayCast(vector, false);
 			}
 		}

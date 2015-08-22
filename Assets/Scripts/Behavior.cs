@@ -1,8 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+[RequireComponent(typeof(Vision))]
 public class Behavior : MonoBehaviour {
-	public Vision vision;
+	Vision vision;
 
 	// Use this for initialization
 	void Start () {

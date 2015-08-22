@@ -51,13 +51,15 @@ public class PlayerInput : MonoBehaviour {
 				}
 				draggedBody = nearest;
 				if (draggedBody != null) { //if we grabbed someone
+					//ignor collision and destroy their colliders
 					draggedBody.GetComponent<Rigidbody2D>().collisionDetectionMode = CollisionDetectionMode2D.None;
-					//destroy their colliders
 					foreach (Collider2D c in draggedBody.GetComponents<Collider2D>()) {
 						Destroy (c);
 					}
 					BoxCollider2D box = draggedBody.AddComponent <BoxCollider2D>();
 					box.isTrigger = true;
+					//disable their behavior script
+					draggedBody.GetComponent<Behavior>().enabled = false;
 				}
 			} else if (draggedBody != null) { //drop the body
 				if (van.kill (draggedBody)) { //try to drop them in the van
