@@ -67,7 +67,7 @@ public class Behavior : MonoBehaviour {
 				Debug.Log("RUN AWAY");
 				// run away
 				running = true;
-				GetComponent<MoveBetweenPoints>().running = true;
+				GetComponent<MoveBetweenPoints>().startRunning();
 			} else if (rand < 80) {
 				Debug.Log("Hey, that's a monster!");
 				manager.lose();

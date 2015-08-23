@@ -10,7 +10,7 @@ public class MoveBetweenPoints : MonoBehaviour {
 	//used to "ping-pong" loop movement
 	public bool patrolReverse;
 	//if the NPC is running away
-	public bool running = false;
+	bool running = false;
 
 	public int currentWaypoint;
 
@@ -49,31 +49,44 @@ public class MoveBetweenPoints : MonoBehaviour {
 	void Update () {
 		if (waypoints.Length > 0) { //if we're moving toward a waypoint
 
-			//if we're patrolling then also move reverse sometimes
-			if (running) {
 
-			}
-			else if (moveType == MoveType.patrol) {
-				if (currentWaypoint >= waypoints.Length) {
-					currentWaypoint --;
-					patrolReverse = true;
-				} else if (currentWaypoint <= 1 && patrolReverse) { //don't patroll all the way back to the spawn...
-					currentWaypoint = 1;
-					patrolReverse = false;
+			if (!running) {
+				//if we're patrolling then also move reverse sometimes
+				if (moveType == MoveType.patrol) {
+					if (currentWaypoint >= waypoints.Length) {
+						currentWaypoint --;
+						patrolReverse = true;
+					} else if (currentWaypoint <= 1 && patrolReverse) { //don't patroll all the way back to the spawn...
+						currentWaypoint = 1;
+						patrolReverse = false;
+					}
+				} if (currentWaypoint == waypoints.Length) {
+					return;
 				}
-			} if (currentWaypoint == waypoints.Length) {
-				return;
-			}
 
-			//if we're at the target, increment the current waypoint
-			if ((transform.position - waypoints[currentWaypoint].position).sqrMagnitude < 0.1f) {
-				if (patrolReverse) {
+				if (moveType == MoveType.pass){
+					if ((transform.position - waypoints[waypoints.Length-1].position).sqrMagnitude < 0.1f) {
+						Destroy(this.gameObject);
+						return;
+					}
+				}
+				//if we're at the target, increment the current waypoint
+				if ((transform.position - waypoints[currentWaypoint].position).sqrMagnitude < 0.1f) {
+					if (patrolReverse) {
+						currentWaypoint--;
+					} else {
+						currentWaypoint ++;
+					}
+				}
+			} else {
+				if ((transform.position - waypoints[0].position).sqrMagnitude < 0.1f) {
+					Destroy(this.gameObject);
+					return;
+				}
+				if ((transform.position - waypoints[currentWaypoint].position).sqrMagnitude < 0.1f) {
 					currentWaypoint--;
-				} else {
-					currentWaypoint ++;
 				}
 			}
-
 			//move toward current waypoint
 			if (currentWaypoint < waypoints.Length) {
 				Vector3 targetPos = waypoints[currentWaypoint].position;
@@ -116,5 +129,10 @@ public class MoveBetweenPoints : MonoBehaviour {
 		for (int i = 0; i < pathLength; i++){
 			waypoints[i] = chosenPath[i].transform;
 		}
+	}
+
+	public void startRunning(){
+		running = true;
+		speed = 2.5f;
 	}
 }
