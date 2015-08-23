@@ -58,7 +58,7 @@ public class Behavior : MonoBehaviour {
 			// detect player, you lose
 			Debug.Log("POLICE: Hey, that's a monster!");
 			GameInfo.loseCondition = GameInfo.LoseCondition.PoliceCaught;
-			manager.lose();
+			manager.beginFade(true);
 		} else {
 			// 50 run away, 30 call police, 20 do nothing
 			if (rand < 50) {
@@ -69,7 +69,7 @@ public class Behavior : MonoBehaviour {
 			} else if (rand < 80) {
 				Debug.Log("Hey, that's a monster!");
 				GameInfo.loseCondition = GameInfo.LoseCondition.PoliceCalled;
-				manager.lose();
+				manager.beginFade(true);
 				// detect player, you lose
 			} // else do nothing
 		}

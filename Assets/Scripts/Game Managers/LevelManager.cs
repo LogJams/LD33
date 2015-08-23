@@ -14,6 +14,7 @@ public class LevelManager : MonoBehaviour {
 	Color color;
 	bool isFaded = false;
 	bool fadeOut = false;
+	bool lostGame = false;
 
 	public Text timer;
 	public float levelTime = 5 * 60; //seconds before level ends
@@ -30,7 +31,10 @@ public class LevelManager : MonoBehaviour {
 		timeSinceSpawns = GameInfo.spawnInterval;
 	}
 
-
+	public void beginFade(bool lose){
+		lostGame = lose;
+		fadeOut = true;
+	}
 	public void endLevel() {
 		GameInfo.nightNumber++;
 		GameInfo.silencingModifier *= .75f;
@@ -57,7 +61,7 @@ public class LevelManager : MonoBehaviour {
 		}
 		levelTime -= Time.deltaTime;
 		if (levelTime <= 0) {
-			endLevel ();
+			beginFade (false);
 		}
 		int mins = (int)(levelTime / 60);
 		int secs = (int)(levelTime % 60);
@@ -72,15 +76,21 @@ public class LevelManager : MonoBehaviour {
 				color.a -= .2f * Time.deltaTime;
 			} else {
 				color.a = 0f;
+				isFaded = true;
 			}
 			blackout.color = color;
 		} else if (fadeOut) {
 			color = blackout.color;
 			if (color.a < .99f) {
-				color.a *= .2f * Time.deltaTime;
+				color.a += .4f * Time.deltaTime;
 			} else {
 				color.a = 1f;
-				endLevel ();
+				blackout.color = color;
+				if (lostGame){
+					lose ();
+				}else{
+					endLevel();
+				}
 			}
 			blackout.color = color;
 		}
