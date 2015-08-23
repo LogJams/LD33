@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
+[RequireComponent(typeof(MeshFilter))]
 public class Vision : MonoBehaviour {
 	// is the player in peripheral vision?
 	public bool inPeripheral;
@@ -18,15 +19,104 @@ public class Vision : MonoBehaviour {
 	// list of GameObjects that are in the NPC's vision range
 	List<GameObject> inVisionRange;
 	public List<GameObject> inLineOfSight;
-	
+
+	public GameObject meshFilter;
+	Mesh shortRange;
+	Mesh longRange;
+	int meshPts = 20;
+
+	Vector3[] visionPoints;
+
+	bool dead;
+
 	void Start () {
 		inPeripheral = false;
 		inMain = false;
 		inVisionRange = new List<GameObject> ();
 		inLineOfSight = new List<GameObject> ();
+
+		visionPoints = new Vector3[meshPts];
+
+		MeshFilter m = ((GameObject)Instantiate (meshFilter, new Vector3(0, 0, -1f), Quaternion.identity)).GetComponent<MeshFilter> ();
+		longRange = m.mesh;
+		m = ((GameObject)Instantiate (meshFilter, new Vector3(0, 0, -0.1f), Quaternion.identity)).GetComponent<MeshFilter> ();
+		shortRange = m.mesh;
+	}
+
+	public void kill() {
+		longRange.Clear ();
+		shortRange.Clear ();
+		dead = true;
+	}
+
+	void UpdateMesh() {
+		shortRange.Clear ();
+		visionPoints [0] = transform.position;
+		shortRange.vertices = visionRaycast(peripheralAngle, peripheralRange);
+
+		int numIndices = (meshPts - 2) * 3;
+		int[] indices = new int[numIndices];
+		int largeIndex = 2;
+		for (int index = 0; index < numIndices; index+=3) {
+			indices[index] = 0;
+			indices[index+1] = largeIndex-1;
+			indices[index+2] = largeIndex;
+			largeIndex ++;
+		}
+		shortRange.triangles = indices;
+		Color[] color = new Color[visionPoints.Length];
+		for (int i = 0; i < color.Length; i++) {
+			color [i] = Color.yellow;
+		}
+		shortRange.colors = color;
+
+		longRange.Clear ();
+		visionPoints [0] = transform.position;
+		longRange.vertices = visionRaycast(mainAngle, mainRange);
+		
+		numIndices = (meshPts - 2) * 3;
+		indices = new int[numIndices];
+		largeIndex = 2;
+		for (int index = 0; index < numIndices; index+=3) {
+			indices[index] = 0;
+			indices[index+1] = largeIndex-1;
+			indices[index+2] = largeIndex;
+			largeIndex ++;
+		}
+		longRange.triangles = indices;
+		color = new Color[visionPoints.Length];
+		for (int i = 0; i < color.Length; i++) {
+			color [i] = Color.red;
+		}
+		longRange.colors = color;
+
+		shortRange.Clear ();
+	}
+
+	Vector3[] visionRaycast(float theta, float range) {
+		Vector3[] pts = new Vector3[meshPts];
+		pts [0] = transform.position;
+
+		float dTheta = 2 * theta / (meshPts-2);
+
+		for (int i = 1; i < meshPts; i++) {
+			Vector3 direction = Quaternion.Euler (0, 0, -theta + dTheta * (i-1)) * transform.right;
+			RaycastHit2D ray;
+			if ((ray = Physics2D.Raycast (transform.position, direction, range)).collider != null) { // if there was a hit
+				pts[i] = new Vector3(ray.point.x, ray.point.y, 0);
+			} else {
+				pts[i] = transform.position + direction*range;
+			}
+		}
+		return pts;
 	}
 
 	void Update () {
+		if (dead)
+			return;
+		//update the vision mesh
+		UpdateMesh ();
+
 		// resset vision bools to false
 		inPeripheral = false;
 		inMain = false;
@@ -85,12 +175,18 @@ public class Vision : MonoBehaviour {
 		}
 		RaycastHit2D hit;
 
+		int index = 1;
+
 		for (int i = -4; i <= 4; i+=2) {
 			if ((hit = raycast (Quaternion.Euler(0,0,i) * vector, castRange)).collider != null){ //if we hit something
 				if (hit.collider.CompareTag("Player") == true || hit.collider.CompareTag("Body") == true){
 					hitCount++;
 				}
-			}	
+				visionPoints[index] = hit.point;
+			} else {
+				visionPoints[index] = new Vector3(vector.normalized.x, vector.normalized.y) * castRange + transform.position;
+			}
+			index ++;
 		}
 		inVision = hitCount > 1;
 		if (inVision && inLineOfSight.Contains (target) == false) {

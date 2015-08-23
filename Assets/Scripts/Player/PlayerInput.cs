@@ -65,6 +65,8 @@ public class PlayerInput : MonoBehaviour {
 					//remove any movement scripts
 					MoveBetweenPoints script = draggedBody.GetComponent<MoveBetweenPoints>();
 					if (script != null) { Destroy (script); }
+					Vision v = draggedBody.GetComponent<Vision>();
+					if (v!=null) { v.kill (); }
 				}
 			} else if (draggedBody != null) { //drop the body
 				if (van.kill (draggedBody)) { //try to drop them in the van
