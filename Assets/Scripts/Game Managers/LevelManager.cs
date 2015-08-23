@@ -70,6 +70,9 @@ public class LevelManager : MonoBehaviour {
 		if (secs < 10) {
 			txt = mins + ":0" + secs;
 		}
+
+		txt = "Night: " + GameInfo.nightNumber + "\n" + txt;
+
 		timer.text = txt;
 		if (!isFaded) {
 			color = blackout.color;

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 public class DumpBody : MonoBehaviour {
 
-	public float killWeight = 0.10f; //how much each kill pleases the voices
+	float killWeight = 0.2f; //how much each kill pleases the voices
 	float silenceMod;
 	public Slider slider;
 
