@@ -16,7 +16,7 @@ public class Exit : MonoBehaviour {
 	void Update () {
 		ActionContext.canLeave = canExit;
 		if (canExit && Input.GetButton ("Action")) {
-			manager.endLevel ();
+			manager.beginFade (false);
 		}
 	}
 
