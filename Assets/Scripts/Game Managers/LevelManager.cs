@@ -3,10 +3,12 @@ using UnityEngine.UI;
 using System.Collections;
 
 public class LevelManager : MonoBehaviour {
-	public float timeBetweenSpawns = 10f;
+	public float timeBetweenSpawns;
 	public float timeSinceSpawns;
 	public GameObject person;
 	public GameObject police;
+	public Slider slider;
+	float loseValue = .5f;
 	int spawnLayer = 1;
 
 	public Text timer;
@@ -17,17 +19,20 @@ public class LevelManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		timeSinceSpawns = timeBetweenSpawns;
+		timeSinceSpawns = GameInfo.spawnInterval;
 	}
 
 
 	public void endLevel() {
-		//interact with static script to keep statistics (eg voice level, body count)
-
-		//adjust diffidulty for next level
-
-		//load next level
-		Application.LoadLevel (1);
+		GameInfo.nightNumber++;
+		GameInfo.silencingModifier *= .75f;
+		if (slider.value > loseValue) {
+			GameInfo.loseCondition = GameInfo.LoseCondition.Insane;
+			lose ();
+		} else {
+			//load next level
+			Application.LoadLevel (1);
+		}
 	}
 
 	public void lose() {

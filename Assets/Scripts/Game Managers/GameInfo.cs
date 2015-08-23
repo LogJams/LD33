@@ -3,12 +3,16 @@
 public static class GameInfo {
 
 	public static int bodyCount = 0;
-	public static int voicesLevel = 0;
-	public static int previousVoicesIncrement = 0;
+	public static float silencingModifier = 1;
 	public static int nightNumber = 0;
-	public enum Music{creepy};
-	public static Music music = Music.creepy;
-	public static int spawnInterval = 0;
-	
+	public static float spawnInterval = 20f;
+	public enum LoseCondition{Insane, PoliceCalled, PoliceCaught};
+	public static LoseCondition loseCondition;
 
+	public static void resetData(){
+		bodyCount = 0;
+		silencingModifier = 1;
+		nightNumber = 0;
+		spawnInterval = 20f;
+	}
 }

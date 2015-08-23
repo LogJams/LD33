@@ -6,7 +6,7 @@ public class Behavior : MonoBehaviour {
 	Vision vision;
 	public bool isPolice = false;
 	public float timeBetweenActions = 15f;
-	public float detectDelay = 2f;
+	public float detectDelay = .5f;
 	bool detectSoundPlayed = false;
 
 	float timeSinceDetection;
@@ -60,6 +60,7 @@ public class Behavior : MonoBehaviour {
 		if (isPolice == true) {
 			// detect player, you lose
 			Debug.Log("POLICE: Hey, that's a monster!");
+			GameInfo.loseCondition = GameInfo.LoseCondition.PoliceCaught;
 			manager.lose();
 		} else {
 			// 50 run away, 30 call police, 20 do nothing
@@ -70,6 +71,7 @@ public class Behavior : MonoBehaviour {
 				GetComponent<MoveBetweenPoints>().startRunning();
 			} else if (rand < 80) {
 				Debug.Log("Hey, that's a monster!");
+				GameInfo.loseCondition = GameInfo.LoseCondition.PoliceCalled;
 				manager.lose();
 				// detect player, you lose
 			} // else do nothing

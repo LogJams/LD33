@@ -5,25 +5,25 @@ using System.Collections.Generic;
 
 public class DumpBody : MonoBehaviour {
 
-	public float killWeight = 0.05f; //how much each kill pleases the voices
+	public float killWeight = 0.10f; //how much each kill pleases the voices
+	float silenceMod;
 	public Slider slider;
-
-
-	int bodyCount;
 
 	List<GameObject> inRange;
 
 	// Use this for initialization
 	void Start () {
 		inRange = new List<GameObject> ();
+		slider.value = 1;
+		silenceMod = GameInfo.silencingModifier;
 	}
 	
 	public bool kill(GameObject human) {
 		bool contains = inRange.Contains (human);
 		if (contains) {
 			inRange.Remove(human);
-			bodyCount ++;
-			slider.value -= killWeight;
+			GameInfo.bodyCount ++;
+			slider.value -= (killWeight * silenceMod);
 			slider.value = Mathf.Max(0, slider.value);
 		}
 		return contains;
