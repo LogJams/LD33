@@ -44,7 +44,7 @@ public class LevelManager : MonoBehaviour {
 		} else {
 			//update statistics and load next level
 			GameInfo.silencingModifier *= .75f;
-			Application.LoadLevel (1);
+			Application.LoadLevel ("Inbetween");
 		}
 	}
 
