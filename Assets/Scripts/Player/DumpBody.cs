@@ -20,6 +20,7 @@ public class DumpBody : MonoBehaviour {
 	
 	public bool kill(GameObject human) {
 		bool contains = inRange.Contains (human);
+		Debug.Log (inRange.Count);
 		if (contains) {
 			inRange.Remove(human);
 			GameInfo.bodyCount ++;
@@ -30,6 +31,11 @@ public class DumpBody : MonoBehaviour {
 	}
 
 	void Update() {
+		for (int i = inRange.Count-1; i >= 0; i--) {
+			if (inRange[i] == null) {
+				inRange.RemoveAt (i);
+			}
+		}
 		ActionContext.canDumpBody = inRange.Count > 0;
 	}
 

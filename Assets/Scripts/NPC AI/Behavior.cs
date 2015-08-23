@@ -44,9 +44,6 @@ public class Behavior : MonoBehaviour {
 				TurnToInvestigate ();
 				detectSoundPlayed = false;
 			} else if (vision.inMain == false) {
-				if (this.gameObject.GetComponent<MoveBetweenPoints> () != null) {
-					this.gameObject.GetComponent<MoveBetweenPoints> ().enabled = true;
-				}
 				detectSoundPlayed = false;
 			} else{
 				detectSoundPlayed = false;
@@ -82,9 +79,6 @@ public class Behavior : MonoBehaviour {
 	void TurnToInvestigate(){
 		GameObject closestTarget = null;
 		float closestDisctance = float.MaxValue;
-		if (this.gameObject.GetComponent<MoveBetweenPoints>()!= null ){
-			this.gameObject.GetComponent<MoveBetweenPoints>().enabled = false;
-		}
 		foreach (GameObject target in vision.inLineOfSight){
 			if (target.CompareTag("Player") == true) {
 				closestTarget = target;

@@ -7,11 +7,16 @@ public class PlayerInput : MonoBehaviour {
 	//is the player currently dragging a body?
 	public bool dragging;
 	public GameObject draggedBody;
+	public float waitTime = 0.5f;
 	float dragDist = 0.5f;
 	DumpBody van;
 	//player movement speed
 	float speed = 2.5f; //m/s
 	float rotSpeed = 3f;
+
+	float delayTime = 0;
+
+	bool busy;
 
 	//list of targets in range to knock out
 	List<GameObject> targets;
@@ -23,6 +28,9 @@ public class PlayerInput : MonoBehaviour {
 	//players rigidbody - used for movement and collision
 	Rigidbody2D body;
 
+	//animatior
+	Animator anim;
+
 	void Awake() {
 		van = GameObject.FindGameObjectWithTag ("Finish").GetComponent<DumpBody> ();
 	}
@@ -32,10 +40,19 @@ public class PlayerInput : MonoBehaviour {
 		velocity = new Vector3 ();
 		body = GetComponent<Rigidbody2D> ();
 		targets = new List<GameObject> ();
+		anim = GetComponent<Animator> ();
 	}
 	
 	// Update is called once per frame
 	void Update () {
+		delayTime -= Time.deltaTime;
+		if (delayTime <= 0) {
+			busy = false;
+		}
+
+		if (busy) {
+			return;
+		}
 
 		ActionContext.canGrabBody = targets.Count > 0;
 
@@ -55,6 +72,8 @@ public class PlayerInput : MonoBehaviour {
 				}
 				draggedBody = nearest;
 				if (draggedBody != null) { //if we grabbed someone
+					busy = true;
+					delayTime = waitTime;
 					//ignor collision and destroy their colliders
 					draggedBody.GetComponent<Rigidbody2D>().collisionDetectionMode = CollisionDetectionMode2D.None;
 					foreach (Collider2D c in draggedBody.GetComponents<Collider2D>()) {
@@ -97,18 +116,25 @@ public class PlayerInput : MonoBehaviour {
 		//calculate the vector from the player's position to the mouse
 		Vector3 direction = Camera.main.ScreenToWorldPoint (Input.mousePosition) - transform.position;
 		rotation = Mathf.Atan2 (direction.y, direction.x) * Mathf.Rad2Deg; //find the angle of the direction vector
+
+		anim.SetBool ("Walking", velocity.sqrMagnitude > 0);
+		anim.SetBool ("Grabbing", dragging);
 	}
 
 	void FixedUpdate() {
-		//rotate the player and move along the x/y axis
-		//rotation is done in transform because Z rotation is fixed in the rigidbody
-		transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.AngleAxis (rotation, Vector3.forward), rotSpeed * Time.fixedDeltaTime);
-		body.MovePosition(transform.position + velocity * Time.fixedDeltaTime * speed);
-		//move whatever we're dragging
 		if (draggedBody != null) {
 			draggedBody.transform.position = transform.position + transform.right * dragDist;
 			draggedBody.transform.rotation = transform.rotation;
 		}
+		if (busy) {
+			return;
+		}
+		//rotate the player and move along the x/y axis
+		//rotation is done in transform because Z rotation is fixed in the rigidbody
+		transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler (new Vector3(0, 0, rotation)), rotSpeed * Time.fixedDeltaTime);
+		body.MovePosition(transform.position + velocity * Time.fixedDeltaTime * speed);
+		//move whatever we're dragging
+
 	}
 
 	void OnTriggerEnter2D(Collider2D other) {
