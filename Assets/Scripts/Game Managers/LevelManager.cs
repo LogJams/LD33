@@ -28,13 +28,9 @@ public class LevelManager : MonoBehaviour {
 		color = blackout.color;
 		color.a = 1f;
 		blackout.color = color;
-<<<<<<< HEAD
 		timeBetweenSpawns = GameInfo.spawnInterval;
 		timeSinceSpawns = timeBetweenSpawns;
-=======
-		timeSinceSpawns = GameInfo.spawnInterval;
 		GameInfo.nightNumber++;
->>>>>>> origin/master
 	}
 
 	public void beginFade(bool lose){
