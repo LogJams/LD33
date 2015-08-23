@@ -49,14 +49,14 @@ public class MoveBetweenPoints : MonoBehaviour {
 
 			//if we're patrolling then also move reverse sometimes
 			if (moveType == MoveType.patrol) {
-				if (currentWaypoint == waypoints.Length) {
+				if (currentWaypoint >= waypoints.Length) {
 					currentWaypoint --;
 					patrolReverse = true;
-				} if (currentWaypoint < 0) {
-					currentWaypoint = 0;
+				} else if (currentWaypoint <= 1 && patrolReverse) { //don't patroll all the way back to the spawn...
+					currentWaypoint = 1;
 					patrolReverse = false;
 				}
-			} else if (currentWaypoint == waypoints.Length) {
+			} if (currentWaypoint == waypoints.Length) {
 				return;
 			}
 
@@ -83,7 +83,7 @@ public class MoveBetweenPoints : MonoBehaviour {
 	}
 
 	void FixedUpdate() {
-		if (waypoints.Length > 0 && currentWaypoint < waypoints.Length && currentWaypoint > 0) { //if we're moving toward a waypoint
+		if (waypoints.Length > 0 && currentWaypoint < waypoints.Length && currentWaypoint >= 0) { //if we're moving toward a waypoint
 			//move toward target
 			if (velocity.magnitude * Time.fixedDeltaTime > (waypoints [currentWaypoint].position - transform.position).magnitude) {
 				body.MovePosition (waypoints [currentWaypoint].position);
@@ -103,6 +103,9 @@ public class MoveBetweenPoints : MonoBehaviour {
 		int pathLength = chosenPath.Length;
 		if (moveType != MoveType.pass) {
 			pathLength = Random.Range (2, chosenPath.Length);
+			if (moveType == MoveType.patrol && pathLength == 2) {
+				pathLength ++;
+			}
 		}
 		waypoints = new Transform[pathLength];
 		for (int i = 0; i < pathLength; i++){
