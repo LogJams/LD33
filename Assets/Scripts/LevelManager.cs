@@ -29,7 +29,7 @@ public class LevelManager : MonoBehaviour {
 				policeNPC.GetComponent<MoveBetweenPoints>().moveType = MoveBetweenPoints.MoveType.patrol;
 			}
 		} else {
-			GameObject npc = Instantiate (person);
+			Instantiate (person);
 		}
 	}
 }

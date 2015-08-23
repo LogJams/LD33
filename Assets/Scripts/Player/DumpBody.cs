@@ -22,14 +22,18 @@ public class DumpBody : MonoBehaviour {
 		return contains;
 	}
 
+	void Update() {
+		ActionContext.canDumpBody = inRange.Count > 0;
+	}
+
 	void OnTriggerEnter2D(Collider2D other) {
-		if (other.CompareTag ("Human") || other.CompareTag ("Body")) {
+		if (other.CompareTag ("Body")) {
 			inRange.Add (other.gameObject);
 		}
 	}
 
 	void OnTriggerExit2D(Collider2D other) {
-		if ((other.CompareTag ("Human") || other.CompareTag ("Body")) && inRange.Contains (other.gameObject)) {
+		if (other.CompareTag ("Body") && inRange.Contains (other.gameObject)) {
 			inRange.Remove(other.gameObject);
 		}
 	}

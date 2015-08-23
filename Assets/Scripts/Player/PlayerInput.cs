@@ -35,6 +35,9 @@ public class PlayerInput : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+
+		ActionContext.canGrabBody = targets.Count > 0;
+
 		//check if the player tries to grab a body
 		if (Input.GetButtonUp ("Jump")) {
 			if (!dragging) { //if we aren't currently dragging a body
@@ -81,6 +84,8 @@ public class PlayerInput : MonoBehaviour {
 
 		dragging = draggedBody != null; //check if we're carrying anything
 
+		ActionContext.carryingBody = dragging;
+
 		//set velocity direction from input
 		velocity.Set (Input.GetAxisRaw ("Horizontal"), Input.GetAxisRaw("Vertical"), 0);
 		velocity.Normalize (); //normalize speed to a unit vector
@@ -106,7 +111,7 @@ public class PlayerInput : MonoBehaviour {
 	}
 
 	void OnTriggerEnter2D(Collider2D other) {
-		if ((other.CompareTag ("Human") || other.CompareTag ("Body")) && !targets.Contains(other.gameObject)) {
+		if ((other.CompareTag ("Human") || other.CompareTag ("Body")) && !targets.Contains(other.gameObject) && other.GetType ().Equals (typeof(BoxCollider2D))) {
 			targets.Add (other.gameObject);
 		}
 	}
