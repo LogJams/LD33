@@ -5,6 +5,8 @@ public class LevelManager : MonoBehaviour {
 	public float timeBetweenSpawns = 10f;
 	public float timeSinceSpawns;
 	public GameObject person;
+	public GameObject police;
+
 	// Use this for initialization
 	void Start () {
 		timeSinceSpawns = timeBetweenSpawns;
@@ -20,6 +22,14 @@ public class LevelManager : MonoBehaviour {
 	}
 
 	void SpawnNPC(){
-		GameObject npc = Instantiate (person);
+		int random = Random.Range (0, 10);
+		if (random == 0) {
+			GameObject policeNPC = Instantiate (police);
+			if (policeNPC.GetComponent<MoveBetweenPoints>().moveType == MoveBetweenPoints.MoveType.wait) {
+				policeNPC.GetComponent<MoveBetweenPoints>().moveType = MoveBetweenPoints.MoveType.patrol;
+			}
+		} else {
+			GameObject npc = Instantiate (person);
+		}
 	}
 }
