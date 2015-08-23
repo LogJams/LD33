@@ -5,30 +5,40 @@ using System.Collections;
 public class Behavior : MonoBehaviour {
 	Vision vision;
 	public bool isPolice = false;
+	public float timeBetweenActions = 15f;
+
 	float timeSinceLastAction;
-		public float timeBetweenActions = 15f;
+
+
+	bool running;
 
 	float rotSpeed = 2;//rotation speed
 
-
+	LevelManager manager;
 	// Use this for initialization
 	void Start () {
+		timeSinceLastAction = timeBetweenActions; //allows immediate acting on spawn
 		vision = GetComponent<Vision> ();
 		timeSinceLastAction = timeBetweenActions;
+		manager = (GameObject.FindGameObjectsWithTag ("Manager"))[0].GetComponent<LevelManager> ();
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		timeSinceLastAction += Time.deltaTime;
-		if (vision.inMain == true && timeSinceLastAction > timeBetweenActions) {
-			Detect ();
-		} else if (vision.inPeripheral == true || vision.inMain == true) {
-			TurnToInvestigate ();
-		} else if(vision.inMain == false){
-			if (this.gameObject.GetComponent<MoveBetweenPoints>()!= null ){
-				this.gameObject.GetComponent<MoveBetweenPoints>().enabled = true;
-			}
-		} 
+		if (!running) {
+			timeSinceLastAction += Time.deltaTime;
+			if (vision.inMain == true && timeSinceLastAction > timeBetweenActions) {
+				Detect ();
+			} else if (vision.inPeripheral == true || vision.inMain == true) {
+				TurnToInvestigate ();
+			} else if (vision.inMain == false) {
+				if (this.gameObject.GetComponent<MoveBetweenPoints> () != null) {
+					this.gameObject.GetComponent<MoveBetweenPoints> ().enabled = true;
+				}
+			} 
+		} else {
+			//run away!
+		}
 	}
 
 	void Detect (){
@@ -37,13 +47,17 @@ public class Behavior : MonoBehaviour {
 		if (isPolice == true) {
 			// detect player, you lose
 			Debug.Log("POLICE: Hey, that's a monster!");
+			manager.lose();
 		} else {
 			// 50 run away, 30 call police, 20 do nothing
 			if (rand < 50) {
 				Debug.Log("RUN AWAY");
 				// run away
+				running = true;
+				GetComponent<MoveBetweenPoints>().enabled = false;
 			} else if (rand < 80) {
 				Debug.Log("Hey, that's a monster!");
+				manager.lose();
 				// detect player, you lose
 			} // else do nothing
 		}

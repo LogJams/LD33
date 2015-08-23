@@ -11,6 +11,7 @@ public class PlayerInput : MonoBehaviour {
 	DumpBody van;
 	//player movement speed
 	float speed = 2.5f; //m/s
+	float rotSpeed = 3f;
 
 	//list of targets in range to knock out
 	List<GameObject> targets;
@@ -39,7 +40,7 @@ public class PlayerInput : MonoBehaviour {
 		ActionContext.canGrabBody = targets.Count > 0;
 
 		//check if the player tries to grab a body
-		if (Input.GetButtonUp ("Jump")) {
+		if (Input.GetButtonUp ("Action")) {
 			if (!dragging) { //if we aren't currently dragging a body
 				//grab the nearest body in the list of targets
 				float minDist = Mathf.Infinity;
@@ -101,7 +102,7 @@ public class PlayerInput : MonoBehaviour {
 	void FixedUpdate() {
 		//rotate the player and move along the x/y axis
 		//rotation is done in transform because Z rotation is fixed in the rigidbody
-		transform.rotation = Quaternion.AngleAxis (rotation, Vector3.forward);
+		transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.AngleAxis (rotation, Vector3.forward), rotSpeed * Time.fixedDeltaTime);
 		body.MovePosition(transform.position + velocity * Time.fixedDeltaTime * speed);
 		//move whatever we're dragging
 		if (draggedBody != null) {

@@ -4,7 +4,7 @@ using System.Collections;
 public class UIManager : MonoBehaviour {
 
 	public void StartGame() {
-		Application.LoadLevel ("Master Scene");
+		Application.LoadLevel ("TutorialScene");
 	}
 
 	public void Exit() {

@@ -11,6 +11,9 @@ public class LevelManager : MonoBehaviour {
 	public Text timer;
 	public float levelTime = 5 * 60; //seconds before level ends
 
+
+	bool transition;
+
 	// Use this for initialization
 	void Start () {
 		timeSinceSpawns = timeBetweenSpawns;
@@ -23,7 +26,11 @@ public class LevelManager : MonoBehaviour {
 		//adjust diffidulty for next level
 
 		//load next level
+		Application.LoadLevel (1);
+	}
 
+	public void lose() {
+		Application.LoadLevel ("Gameover");
 	}
 
 	
@@ -38,7 +45,13 @@ public class LevelManager : MonoBehaviour {
 		if (levelTime <= 0) {
 			endLevel ();
 		}
-		timer.text = (int)(levelTime/60) + ":" + (int)(levelTime%60);
+		int mins = (int)(levelTime / 60);
+		int secs = (int)(levelTime % 60);
+		string txt = mins + ":" + secs;
+		if (secs < 10) {
+			txt = mins + ":0" + secs;
+		}
+		timer.text = txt;
 	}
 	
 	void SpawnNPC(){
