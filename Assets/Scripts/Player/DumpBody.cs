@@ -1,8 +1,13 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 
 public class DumpBody : MonoBehaviour {
+
+	public float killWeight = 0.05f; //how much each kill pleases the voices
+	public Slider slider;
+
 
 	int bodyCount;
 
@@ -18,6 +23,8 @@ public class DumpBody : MonoBehaviour {
 		if (contains) {
 			inRange.Remove(human);
 			bodyCount ++;
+			slider.value -= killWeight;
+			slider.value = Mathf.Max(0, slider.value);
 		}
 		return contains;
 	}

@@ -9,7 +9,7 @@ public class ActionContext {
 
 
 	public static string getContext() {
-		string context = "";
+		string context = " ";
 		if (canDumpBody && carryingBody) {
 			context = "SPACE to store body";
 		} else if (carryingBody) {
