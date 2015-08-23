@@ -6,9 +6,11 @@ public class MoveBetweenPoints : MonoBehaviour {
 	public Transform[] waypoints;
 	public enum MoveType{patrol, pass, wait};
 	public MoveType moveType;
-	public bool patrol;
 
-	int currentWaypoint;
+	//used to "ping-pong" loop movement
+	public bool patrolReverse;
+
+	public int currentWaypoint;
 
 	float speed = 0.75f;
 	float rotSpeed = 5;
@@ -43,37 +45,54 @@ public class MoveBetweenPoints : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if (waypoints.Length > 0 && currentWaypoint < waypoints.Length) { //if we're moving toward a waypoint
+		if (waypoints.Length > 0) { //if we're moving toward a waypoint
+
+			//if we're patrolling then also move reverse sometimes
+			if (moveType == MoveType.patrol) {
+				if (currentWaypoint == waypoints.Length) {
+					currentWaypoint --;
+					patrolReverse = true;
+				} if (currentWaypoint < 0) {
+					currentWaypoint = 0;
+					patrolReverse = false;
+				}
+			} else if (currentWaypoint == waypoints.Length) {
+				return;
+			}
+
 			//if we're at the target, increment the current waypoint
 			if ((transform.position - waypoints[currentWaypoint].position).sqrMagnitude < 0.1f) {
-				currentWaypoint ++;
+				if (patrolReverse) {
+					currentWaypoint--;
+				} else {
+					currentWaypoint ++;
+				}
 			}
-			//if we're patrolling modulate the waypoint by the length
-			if (moveType == MoveType.patrol) {
-				currentWaypoint = currentWaypoint % waypoints.Length;
-			}
+
 			//move toward current waypoint
 			if (currentWaypoint < waypoints.Length) {
-			Vector3 targetPos = waypoints[currentWaypoint].position;
-			velocity = targetPos - transform.position;
-			velocity = velocity.normalized * speed;
+				Vector3 targetPos = waypoints[currentWaypoint].position;
+				velocity = targetPos - transform.position;
+				velocity = velocity.normalized * speed;
+				//set desired rotation
+				desiredRot = Mathf.Atan2 (velocity.y, velocity.x) * Mathf.Rad2Deg;
+			} else {
+				desiredRot += (90*Mathf.Sign(transform.right.x + transform.right.y));
 			}
-			//set desired rotation
-			desiredRot = Mathf.Atan2 (velocity.y, velocity.x) * Mathf.Rad2Deg;
 		}
 	}
 
 	void FixedUpdate() {
-		if (waypoints.Length > 0 && currentWaypoint < waypoints.Length) { //if we're moving toward a waypoint
+		if (waypoints.Length > 0 && currentWaypoint < waypoints.Length && currentWaypoint > 0) { //if we're moving toward a waypoint
 			//move toward target
 			if (velocity.magnitude * Time.fixedDeltaTime > (waypoints [currentWaypoint].position - transform.position).magnitude) {
 				body.MovePosition (waypoints [currentWaypoint].position);
 			} else {
 				body.MovePosition (transform.position + velocity * Time.fixedDeltaTime);
 			}
-			//rotate toward the desired value
-			transform.rotation = Quaternion.Lerp (transform.rotation, Quaternion.Euler (0, 0, desiredRot), Time.fixedDeltaTime * rotSpeed);
 		}
+		//rotate toward the desired value
+		transform.rotation = Quaternion.Lerp (transform.rotation, Quaternion.Euler (0, 0, desiredRot), Time.fixedDeltaTime * rotSpeed);
 	}
 
 	void GetPath(){
