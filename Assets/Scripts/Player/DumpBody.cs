@@ -8,7 +8,7 @@ public class DumpBody : MonoBehaviour {
 	float killWeight = 0.2f; //how much each kill pleases the voices
 	float silenceMod;
 	public Slider slider;
-
+	public Image sliderfill;
 	List<GameObject> inRange;
 
 	// Use this for initialization
@@ -25,6 +25,9 @@ public class DumpBody : MonoBehaviour {
 			GameInfo.bodyCount ++;
 			slider.value -= (killWeight * silenceMod);
 			slider.value = Mathf.Max(0, slider.value);
+			if (slider.value <= 0.5) {
+				sliderfill.color = Color.yellow;
+			}
 		}
 		return contains;
 	}
