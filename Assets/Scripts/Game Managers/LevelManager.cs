@@ -8,8 +8,12 @@ public class LevelManager : MonoBehaviour {
 	public GameObject person;
 	public GameObject police;
 	public Slider slider;
+	public Image blackout;
 	float loseValue = .5f;
 	int spawnLayer = 1;
+	Color color;
+	bool isFaded = false;
+	bool fadeOut = false;
 
 	public Text timer;
 	public float levelTime = 5 * 60; //seconds before level ends
@@ -19,6 +23,10 @@ public class LevelManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+		levelTime += 5;
+		color = blackout.color;
+		color.a = 1f;
+		blackout.color = color;
 		timeSinceSpawns = GameInfo.spawnInterval;
 	}
 
@@ -58,6 +66,24 @@ public class LevelManager : MonoBehaviour {
 			txt = mins + ":0" + secs;
 		}
 		timer.text = txt;
+		if (!isFaded) {
+			color = blackout.color;
+			if (color.a > .01f) {
+				color.a -= .2f * Time.deltaTime;
+			} else {
+				color.a = 0f;
+			}
+			blackout.color = color;
+		} else if (fadeOut) {
+			color = blackout.color;
+			if (color.a < .99f) {
+				color.a *= .2f * Time.deltaTime;
+			} else {
+				color.a = 1f;
+				endLevel ();
+			}
+			blackout.color = color;
+		}
 	}
 	
 	void SpawnNPC(){
