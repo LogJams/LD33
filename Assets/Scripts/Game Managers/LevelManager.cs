@@ -28,8 +28,13 @@ public class LevelManager : MonoBehaviour {
 		color = blackout.color;
 		color.a = 1f;
 		blackout.color = color;
+<<<<<<< HEAD
 		timeBetweenSpawns = GameInfo.spawnInterval;
 		timeSinceSpawns = timeBetweenSpawns;
+=======
+		timeSinceSpawns = GameInfo.spawnInterval;
+		GameInfo.nightNumber++;
+>>>>>>> origin/master
 	}
 
 	public void beginFade(bool lose){
@@ -37,13 +42,12 @@ public class LevelManager : MonoBehaviour {
 		fadeOut = true;
 	}
 	public void endLevel() {
-		GameInfo.nightNumber++;
-		GameInfo.silencingModifier *= .75f;
 		if (slider.value > loseValue) {
 			GameInfo.loseCondition = GameInfo.LoseCondition.Insane;
 			lose ();
 		} else {
-			//load next level
+			//update statistics and load next level
+			GameInfo.silencingModifier *= .75f;
 			Application.LoadLevel (1);
 		}
 	}
