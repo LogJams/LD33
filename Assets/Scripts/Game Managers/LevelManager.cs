@@ -3,8 +3,8 @@ using UnityEngine.UI;
 using System.Collections;
 
 public class LevelManager : MonoBehaviour {
-	public float timeBetweenSpawns;
-	public float timeSinceSpawns;
+	float timeBetweenSpawns;
+	float timeSinceSpawns;
 	public GameObject person;
 	public GameObject police;
 	public Slider slider;
@@ -28,7 +28,8 @@ public class LevelManager : MonoBehaviour {
 		color = blackout.color;
 		color.a = 1f;
 		blackout.color = color;
-		timeSinceSpawns = GameInfo.spawnInterval;
+		timeBetweenSpawns = GameInfo.spawnInterval;
+		timeSinceSpawns = timeBetweenSpawns;
 	}
 
 	public void beginFade(bool lose){
@@ -107,7 +108,10 @@ public class LevelManager : MonoBehaviour {
 		} else {
 			npc = Instantiate (person);
 		}
-		npc.GetComponent<SpriteRenderer>().sortingOrder = spawnLayer;
-		spawnLayer++;
+		SpriteRenderer[] sprites = npc.GetComponentsInChildren<SpriteRenderer>();
+		foreach (SpriteRenderer sr in sprites) {
+			sr.sortingLayerID += spawnLayer;
+		}
+		spawnLayer+=5;
 	}
 }

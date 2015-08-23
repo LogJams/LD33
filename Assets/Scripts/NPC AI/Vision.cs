@@ -35,10 +35,11 @@ public class Vision : MonoBehaviour {
 	public void kill() {
 		Transform[] child = transform.GetComponentsInChildren<Transform> ();
 		for (int i = child.Length-1; i > 0; i --) {
-			Destroy (child[i].gameObject);
+			if (child[i].CompareTag("Vision"))
+				Destroy (child[i].gameObject);
 		}
-
 		dead = true;
+		GetComponent<Animator> ().SetTrigger ("Dead");
 	}
 	
 

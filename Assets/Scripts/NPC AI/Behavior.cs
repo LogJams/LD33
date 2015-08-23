@@ -61,12 +61,12 @@ public class Behavior : MonoBehaviour {
 			manager.beginFade(true);
 		} else {
 			// 50 run away, 30 call police, 20 do nothing
-			if (rand < 50) {
+			if (rand < 70) {
 				Debug.Log("RUN AWAY");
 				// run away
 				running = true;
 				GetComponent<MoveBetweenPoints>().startRunning();
-			} else if (rand < 80) {
+			} else {
 				Debug.Log("Hey, that's a monster!");
 				GameInfo.loseCondition = GameInfo.LoseCondition.PoliceCalled;
 				manager.beginFade(true);

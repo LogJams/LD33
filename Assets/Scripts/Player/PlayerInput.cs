@@ -131,7 +131,11 @@ public class PlayerInput : MonoBehaviour {
 		}
 		//rotate the player and move along the x/y axis
 		//rotation is done in transform because Z rotation is fixed in the rigidbody
-		transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler (new Vector3(0, 0, rotation)), rotSpeed * Time.fixedDeltaTime);
+		float mod = 1;
+		if (dragging) {
+			mod /= 2;
+		}
+		transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler (new Vector3(0, 0, rotation)), rotSpeed * Time.fixedDeltaTime * mod);
 		body.MovePosition(transform.position + velocity * Time.fixedDeltaTime * speed);
 		//move whatever we're dragging
 

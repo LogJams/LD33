@@ -22,6 +22,7 @@ public class MoveBetweenPoints : MonoBehaviour {
 
 	Vector3 velocity;
 
+	Animator anim;
 
 
 	Rigidbody2D body;
@@ -43,12 +44,13 @@ public class MoveBetweenPoints : MonoBehaviour {
 		GetPath ();
 		currentWaypoint = 0;
 		transform.position = waypoints [0].position;
+		anim = GetComponent<Animator> ();
 	}
 	
 	// Update is called once per frame
 	void Update () {
 		if (waypoints.Length > 0) { //if we're moving toward a waypoint
-
+			anim.SetBool ("Walking", velocity.sqrMagnitude > 0.1);
 
 			if (!running) {
 				//if we're patrolling then also move reverse sometimes
@@ -61,6 +63,7 @@ public class MoveBetweenPoints : MonoBehaviour {
 						patrolReverse = false;
 					}
 				} if (currentWaypoint == waypoints.Length) {
+					anim.SetBool ("Walking", false);
 					return;
 				}
 
@@ -98,6 +101,12 @@ public class MoveBetweenPoints : MonoBehaviour {
 				desiredRot += (90*Mathf.Sign(transform.right.x + transform.right.y));
 			}
 		}
+		if (running) {
+			anim.speed = 3;
+		}
+
+
+
 	}
 
 	void FixedUpdate() {
@@ -134,5 +143,6 @@ public class MoveBetweenPoints : MonoBehaviour {
 	public void startRunning(){
 		running = true;
 		speed = 2.5f;
+		currentWaypoint = Mathf.Max (currentWaypoint - 1, 0);
 	}
 }
