@@ -6,8 +6,11 @@ public class Behavior : MonoBehaviour {
 	Vision vision;
 	public bool isPolice = false;
 	public float timeBetweenActions = 15f;
+	public float detectDelay = 2f;
+	bool detectSoundPlayed = false;
 
-	float timeSinceLastAction;
+	float timeSinceDetection;
+	float timeSinceLastAction = 0f;
 
 
 	bool running;
@@ -28,16 +31,26 @@ public class Behavior : MonoBehaviour {
 		if (!running) {
 			timeSinceLastAction += Time.deltaTime;
 			if (vision.inMain == true && timeSinceLastAction > timeBetweenActions) {
-				Detect ();
+				timeSinceDetection += Time.deltaTime;
+				if (timeSinceDetection > detectDelay){
+					Detect ();
+					timeSinceDetection = 0f;
+					detectSoundPlayed = false;
+				}else if (!detectSoundPlayed) {
+					//play detect sound
+					detectSoundPlayed = true;
+				}
 			} else if (vision.inPeripheral == true || vision.inMain == true) {
 				TurnToInvestigate ();
+				detectSoundPlayed = false;
 			} else if (vision.inMain == false) {
 				if (this.gameObject.GetComponent<MoveBetweenPoints> () != null) {
 					this.gameObject.GetComponent<MoveBetweenPoints> ().enabled = true;
 				}
-			} 
-		} else {
-			//run away!
+				detectSoundPlayed = false;
+			} else{
+				detectSoundPlayed = false;
+			}
 		}
 	}
 
@@ -54,7 +67,7 @@ public class Behavior : MonoBehaviour {
 				Debug.Log("RUN AWAY");
 				// run away
 				running = true;
-				GetComponent<MoveBetweenPoints>().enabled = false;
+				GetComponent<MoveBetweenPoints>().running = true;
 			} else if (rand < 80) {
 				Debug.Log("Hey, that's a monster!");
 				manager.lose();

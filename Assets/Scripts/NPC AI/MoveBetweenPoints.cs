@@ -9,6 +9,8 @@ public class MoveBetweenPoints : MonoBehaviour {
 
 	//used to "ping-pong" loop movement
 	public bool patrolReverse;
+	//if the NPC is running away
+	public bool running = false;
 
 	public int currentWaypoint;
 
@@ -48,7 +50,10 @@ public class MoveBetweenPoints : MonoBehaviour {
 		if (waypoints.Length > 0) { //if we're moving toward a waypoint
 
 			//if we're patrolling then also move reverse sometimes
-			if (moveType == MoveType.patrol) {
+			if (running) {
+
+			}
+			else if (moveType == MoveType.patrol) {
 				if (currentWaypoint >= waypoints.Length) {
 					currentWaypoint --;
 					patrolReverse = true;

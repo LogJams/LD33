@@ -7,6 +7,7 @@ public class LevelManager : MonoBehaviour {
 	public float timeSinceSpawns;
 	public GameObject person;
 	public GameObject police;
+	int spawnLayer = 1;
 
 	public Text timer;
 	public float levelTime = 5 * 60; //seconds before level ends
@@ -56,13 +57,16 @@ public class LevelManager : MonoBehaviour {
 	
 	void SpawnNPC(){
 		int random = Random.Range (0, 10);
+		GameObject npc;
 		if (random == 0) {
-			GameObject policeNPC = Instantiate (police);
-			if (policeNPC.GetComponent<MoveBetweenPoints>().moveType == MoveBetweenPoints.MoveType.wait) {
-				policeNPC.GetComponent<MoveBetweenPoints>().moveType = MoveBetweenPoints.MoveType.patrol;
+			npc = Instantiate (police);
+			if (npc.GetComponent<MoveBetweenPoints>().moveType == MoveBetweenPoints.MoveType.wait) {
+				npc.GetComponent<MoveBetweenPoints>().moveType = MoveBetweenPoints.MoveType.patrol;
 			}
 		} else {
-			Instantiate (person);
+			npc = Instantiate (person);
 		}
+		npc.GetComponent<SpriteRenderer>().sortingOrder = spawnLayer;
+		spawnLayer++;
 	}
 }
