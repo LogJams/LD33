@@ -6,12 +6,17 @@ public class Behavior : MonoBehaviour {
 	Vision vision;
 	public bool isPolice = false;
 	public float timeBetweenActions = 15f;
-	public float detectDelay = .5f;
+	float detectDelay = 0.25f;
 	bool detectSoundPlayed = false;
+
+	public AudioClip scream;
+
+	AudioSource sound;
 
 	float timeSinceDetection;
 	float timeSinceLastAction = 0f;
 
+	public static bool policeFrenzy = false;
 
 	bool running;
 
@@ -24,6 +29,7 @@ public class Behavior : MonoBehaviour {
 		vision = GetComponent<Vision> ();
 		timeSinceLastAction = timeBetweenActions;
 		manager = (GameObject.FindGameObjectsWithTag ("Manager"))[0].GetComponent<LevelManager> ();
+		sound = GetComponent<AudioSource> ();
 	}
 	
 	// Update is called once per frame
@@ -33,7 +39,7 @@ public class Behavior : MonoBehaviour {
 			if (vision.inMain == true && timeSinceLastAction > timeBetweenActions) {
 				timeSinceDetection += Time.deltaTime;
 				if (timeSinceDetection > detectDelay){
-					Detect ();
+					Detect (vision.getTag());
 					timeSinceDetection = 0f;
 					detectSoundPlayed = false;
 				}else if (!detectSoundPlayed) {
@@ -51,26 +57,37 @@ public class Behavior : MonoBehaviour {
 		}
 	}
 
-	void Detect (){
+	void Detect (string[] tags){
 		int rand = Random.Range (0, 100);
 
+		bool seePlayer = false;
+		foreach (string s in tags) {
+			if (s.Equals("Player")) {
+				seePlayer = true;
+			}
+		}
+
 		if (isPolice == true) {
+			if (seePlayer) {
 			// detect player, you lose
 			Debug.Log("POLICE: Hey, that's a monster!");
 			GameInfo.loseCondition = GameInfo.LoseCondition.PoliceCaught;
 			manager.beginFade(true);
+			} else {
+				Behavior.policeFrenzy = true;
+			}
 		} else {
 			// 50 run away, 30 call police, 20 do nothing
-			if (rand < 70) {
-				Debug.Log("RUN AWAY");
+			if (rand < 60) {
+				sound.PlayOneShot (scream);
 				// run away
 				running = true;
 				GetComponent<MoveBetweenPoints>().startRunning();
 			} else {
-				Debug.Log("Hey, that's a monster!");
-				GameInfo.loseCondition = GameInfo.LoseCondition.PoliceCalled;
-				manager.beginFade(true);
-				// detect player, you lose
+				Behavior.policeFrenzy = true;
+				//911 call sound plays here
+				running = true;
+				GetComponent<MoveBetweenPoints>().startRunning();
 			} // else do nothing
 		}
 		timeSinceLastAction = 0f;

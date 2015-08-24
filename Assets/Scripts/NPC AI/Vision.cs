@@ -20,6 +20,8 @@ public class Vision : MonoBehaviour {
 	List<GameObject> inVisionRange;
 	public List<GameObject> inLineOfSight;
 
+	public List<GameObject> inMainVision;
+
 
 	bool dead;
 
@@ -28,8 +30,16 @@ public class Vision : MonoBehaviour {
 		inMain = false;
 		inVisionRange = new List<GameObject> ();
 		inLineOfSight = new List<GameObject> ();
+		inMainVision = new List<GameObject> ();
 
+	}
 
+	public string[] getTag() {
+		string[] tags = new string[inMainVision.Count];
+		for (int i = 0; i < inMainVision.Count; i++) {
+			tags[i] = inMainVision[i].tag;
+		}
+		return tags;
 	}
 
 	public void kill() {
@@ -83,14 +93,14 @@ public class Vision : MonoBehaviour {
 	}
 
 	void OnTriggerEnter2D(Collider2D collider) {
-		if (inVisionRange.Contains(collider.gameObject) == false && collider.isTrigger == false
-		    && (collider.CompareTag("Player") == true || collider.CompareTag("Body") == true)){
+		if (inVisionRange.Contains(collider.gameObject) == false
+		    && ((collider.CompareTag("Player") == true && !collider.isTrigger) || collider.CompareTag("Body") == true)){
 			inVisionRange.Add(collider.gameObject);
 		}
 	}
 
 	void OnTriggerExit2D(Collider2D collider){
-		if (inVisionRange.Contains(collider.gameObject) == true && collider.isTrigger == false){
+		if (inVisionRange.Contains(collider.gameObject) == true){
 			inVisionRange.Remove(collider.gameObject);
 		}
 	}
@@ -102,9 +112,10 @@ public class Vision : MonoBehaviour {
 
 		if (mainVision == false) {
 			castRange = peripheralRange;
+		} else {
+			inMainVision.Clear ();
 		}
 		RaycastHit2D hit;
-
 
 		for (int i = -4; i <= 4; i+=2) {
 			if ((hit = raycast (Quaternion.Euler(0,0,i) * vector, castRange)).collider != null){ //if we hit something
@@ -116,6 +127,9 @@ public class Vision : MonoBehaviour {
 		inVision = hitCount > 1;
 		if (inVision && inLineOfSight.Contains (target) == false) {
 			inLineOfSight.Add(target);
+		}
+		if (inVision && mainVision && !inMainVision.Contains (target)) {
+			inMainVision.Add (target);
 		}
 		return inVision;
 	}

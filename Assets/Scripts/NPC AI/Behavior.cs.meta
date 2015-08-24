@@ -1,10 +1,11 @@
 fileFormatVersion: 2
 guid: c89dfa11de77b8d47bea5f920e376b2a
-timeCreated: 1440216984
+timeCreated: 1440374124
 licenseType: Free
 MonoImporter:
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - scream: {fileID: 8300000, guid: c935d140bbbc3ac46bf0f95eb37c9040, type: 3}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

@@ -9,6 +9,7 @@ public class LevelManager : MonoBehaviour {
 	public GameObject police;
 	public Slider slider;
 	public Image blackout;
+	
 	float loseValue = .5f;
 	int spawnLayer = 1;
 	Color color;
@@ -59,11 +60,14 @@ public class LevelManager : MonoBehaviour {
 		if (timeSinceSpawns > timeBetweenSpawns) {
 			SpawnNPC ();
 			timeSinceSpawns = 0f;
+			if (Behavior.policeFrenzy) {
+				timeSinceSpawns += timeBetweenSpawns/2;
+			}
 		}
 		levelTime -= Time.deltaTime;
-		if (levelTime <= 0) {
-			beginFade (false);
-		}
+//		if (levelTime <= 0) {
+//			beginFade (false);
+//		}
 		int mins = (int)(levelTime / 60);
 		int secs = (int)(levelTime % 60);
 		string txt = mins + ":" + secs;
@@ -103,7 +107,8 @@ public class LevelManager : MonoBehaviour {
 	void SpawnNPC(){
 		int random = Random.Range (0, 10);
 		GameObject npc;
-		if (random == 0) {
+		Debug.Log (Behavior.policeFrenzy);
+		if (random <= 3 || Behavior.policeFrenzy) {
 			npc = Instantiate (police);
 			if (npc.GetComponent<MoveBetweenPoints>().moveType == MoveBetweenPoints.MoveType.wait) {
 				npc.GetComponent<MoveBetweenPoints>().moveType = MoveBetweenPoints.MoveType.patrol;
