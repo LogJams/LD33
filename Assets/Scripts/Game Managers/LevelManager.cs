@@ -5,7 +5,7 @@ using System.Collections;
 public class LevelManager : MonoBehaviour {
 	float timeBetweenSpawns;
 	float timeSinceSpawns;
-	public GameObject person;
+	public GameObject[] person;
 	public GameObject police;
 	public Slider slider;
 	public Image blackout;
@@ -122,7 +122,7 @@ public class LevelManager : MonoBehaviour {
 				npc.GetComponent<MoveBetweenPoints>().moveType = MoveBetweenPoints.MoveType.patrol;
 			}
 		} else {
-			npc = Instantiate (person);
+			npc = Instantiate (person[Random.Range (0, person.Length)]);
 		}
 		SpriteRenderer[] sprites = npc.GetComponentsInChildren<SpriteRenderer>();
 		foreach (SpriteRenderer sr in sprites) {
