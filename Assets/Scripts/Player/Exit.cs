@@ -3,19 +3,23 @@ using System.Collections;
 
 public class Exit : MonoBehaviour {
 
-	bool canExit;
+	public AudioClip carStart;
 
+	bool canExit;
+	AudioSource sound;
 	LevelManager manager;
 
 	// Use this for initialization
 	void Start () {
 		manager = GameObject.FindGameObjectWithTag ("Manager").GetComponent<LevelManager> ();
+		sound = GetComponent<AudioSource> ();
 	}
 	
 	// Update is called once per frame
 	void Update () {
 		ActionContext.canLeave = canExit;
 		if (canExit && Input.GetButton ("Action")) {
+			sound.PlayOneShot (carStart);
 			manager.beginFade (false);
 		}
 	}

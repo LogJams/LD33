@@ -5,12 +5,14 @@ using System.Collections;
 public class Behavior : MonoBehaviour {
 	Vision vision;
 	public bool isPolice = false;
-	public float timeBetweenActions = 5f;
+	public float timeBetweenActions = 0.2f;
 	float detectDelay = 0.25f;
 	bool detectSoundPlayed = false;
 
 	public AudioClip scream;
 	public AudioClip gunshot;
+	public AudioClip call911;
+	public AudioClip radio;
 
 	AudioSource sound;
 
@@ -74,6 +76,9 @@ public class Behavior : MonoBehaviour {
 				sound.PlayOneShot(gunshot);
 			manager.beginFade(true);
 			} else {
+				if (!policeFrenzy) {
+					sound.PlayOneShot(radio);
+				}
 				Behavior.policeFrenzy = true;
 			}
 		} else {
@@ -84,6 +89,9 @@ public class Behavior : MonoBehaviour {
 				running = true;
 				GetComponent<MoveBetweenPoints>().startRunning();
 			} else {
+				if (!Behavior.policeFrenzy) {
+					sound.PlayOneShot (call911);
+				}
 				Behavior.policeFrenzy = true;
 				//911 call sound plays here
 				running = true;

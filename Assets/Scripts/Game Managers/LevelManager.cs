@@ -9,6 +9,8 @@ public class LevelManager : MonoBehaviour {
 	public GameObject police;
 	public Slider slider;
 	public Image blackout;
+	public AudioClip siren;
+
 
 	float spawnCooldownDecay = 0.9f;
 
@@ -25,8 +27,12 @@ public class LevelManager : MonoBehaviour {
 
 	bool transition;
 
+	bool playedSiren = false;
+	AudioSource sound;
+
 	// Use this for initialization
 	void Start () {
+		Behavior.policeFrenzy = false;
 		color = blackout.color;
 		color.a = 1f;
 		blackout.color = color;
@@ -36,6 +42,7 @@ public class LevelManager : MonoBehaviour {
 
 		string txt = "Night: " + GameInfo.nightNumber;
 		info.text = txt;
+		sound = GetComponent<AudioSource> ();
 	}
 
 	public void beginFade(bool lose){
@@ -64,6 +71,11 @@ public class LevelManager : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+		if (!playedSiren && Behavior.policeFrenzy) {
+			sound.PlayOneShot(siren);
+			playedSiren = true;
+		}
+
 		timeSinceSpawns += Time.deltaTime;
 		if (timeSinceSpawns > timeBetweenSpawns) {
 			SpawnNPC ();

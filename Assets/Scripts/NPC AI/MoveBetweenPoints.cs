@@ -124,7 +124,6 @@ public class MoveBetweenPoints : MonoBehaviour {
 			//rotate toward the desired value
 			transform.rotation = Quaternion.Lerp (transform.rotation, Quaternion.Euler (0, 0, desiredRot), Time.fixedDeltaTime * rotSpeed);
 		} else {
-			Debug.Log (angleOverride + ", " + (angleOverride < 361));
 			transform.rotation = Quaternion.Lerp (transform.rotation, Quaternion.Euler (0, 0, angleOverride), Time.fixedDeltaTime * rotSpeed);
 		}
 	}

@@ -9,6 +9,7 @@ public class PlayerInput : MonoBehaviour {
 	public GameObject draggedBody;
 	public float waitTime = 0.5f;
 	public AudioClip grab;
+	public AudioClip drop;
 	float dragDist = 0.5f;
 	DumpBody van;
 	//player movement speed
@@ -100,6 +101,7 @@ public class PlayerInput : MonoBehaviour {
 					draggedBody.layer = LayerMask.NameToLayer ("Ignore Raycast");
 				}
 			} else if (draggedBody != null) { //drop the body
+				audioSrc.PlayOneShot (drop);
 				draggedBody.layer = 0;
 				if (van.kill (draggedBody)) { //try to drop them in the van
 					targets.Remove (draggedBody); //remove them from the list of things that can be grabbed
