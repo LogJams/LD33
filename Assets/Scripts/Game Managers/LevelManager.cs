@@ -9,7 +9,11 @@ public class LevelManager : MonoBehaviour {
 	public GameObject police;
 	public Slider slider;
 	public Image blackout;
-	
+
+	float spawnCooldownDecay = 0.9f;
+
+	float fadeMod = 1;
+
 	float loseValue = .5f;
 	int spawnLayer = 1;
 	Color color;
@@ -17,25 +21,28 @@ public class LevelManager : MonoBehaviour {
 	bool fadeOut = false;
 	bool lostGame = false;
 
-	public Text timer;
-	public float levelTime = 5 * 60; //seconds before level ends
-
+	public Text info;
 
 	bool transition;
 
 	// Use this for initialization
 	void Start () {
-		levelTime += 5;
 		color = blackout.color;
 		color.a = 1f;
 		blackout.color = color;
 		timeBetweenSpawns = GameInfo.spawnInterval;
 		timeSinceSpawns = timeBetweenSpawns;
 		GameInfo.nightNumber++;
+
+		string txt = "Night: " + GameInfo.nightNumber;
+		info.text = txt;
 	}
 
 	public void beginFade(bool lose){
 		lostGame = lose;
+		if (lose) {
+			fadeMod = 3.5f;
+		}
 		fadeOut = true;
 	}
 	public void endLevel() {
@@ -45,6 +52,7 @@ public class LevelManager : MonoBehaviour {
 		} else {
 			//update statistics and load next level
 			GameInfo.silencingModifier *= .75f;
+			GameInfo.spawnInterval *= spawnCooldownDecay;
 			Application.LoadLevel ("Inbetween");
 		}
 	}
@@ -64,20 +72,9 @@ public class LevelManager : MonoBehaviour {
 				timeSinceSpawns += timeBetweenSpawns/2;
 			}
 		}
-		levelTime -= Time.deltaTime;
 //		if (levelTime <= 0) {
 //			beginFade (false);
 //		}
-		int mins = (int)(levelTime / 60);
-		int secs = (int)(levelTime % 60);
-		string txt = mins + ":" + secs;
-		if (secs < 10) {
-			txt = mins + ":0" + secs;
-		}
-
-		txt = "Night: " + GameInfo.nightNumber + "\n" + txt;
-
-		timer.text = txt;
 		if (!isFaded) {
 			color = blackout.color;
 			if (color.a > .01f) {
@@ -90,7 +87,7 @@ public class LevelManager : MonoBehaviour {
 		} else if (fadeOut) {
 			color = blackout.color;
 			if (color.a < .99f) {
-				color.a += .4f * Time.deltaTime;
+				color.a += fadeMod * 0.4f * Time.deltaTime;
 			} else {
 				color.a = 1f;
 				blackout.color = color;
@@ -107,8 +104,7 @@ public class LevelManager : MonoBehaviour {
 	void SpawnNPC(){
 		int random = Random.Range (0, 10);
 		GameObject npc;
-		Debug.Log (Behavior.policeFrenzy);
-		if (random <= 3 || Behavior.policeFrenzy) {
+		if (random <= 1 || Behavior.policeFrenzy) {
 			npc = Instantiate (police);
 			if (npc.GetComponent<MoveBetweenPoints>().moveType == MoveBetweenPoints.MoveType.wait) {
 				npc.GetComponent<MoveBetweenPoints>().moveType = MoveBetweenPoints.MoveType.patrol;

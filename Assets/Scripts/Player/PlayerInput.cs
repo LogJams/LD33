@@ -8,6 +8,7 @@ public class PlayerInput : MonoBehaviour {
 	public bool dragging;
 	public GameObject draggedBody;
 	public float waitTime = 0.5f;
+	public AudioClip grab;
 	float dragDist = 0.5f;
 	DumpBody van;
 	//player movement speed
@@ -17,6 +18,7 @@ public class PlayerInput : MonoBehaviour {
 	float delayTime = 0;
 
 	bool busy;
+	AudioSource audioSrc;
 
 	//list of targets in range to knock out
 	List<GameObject> targets;
@@ -41,6 +43,7 @@ public class PlayerInput : MonoBehaviour {
 		body = GetComponent<Rigidbody2D> ();
 		targets = new List<GameObject> ();
 		anim = GetComponent<Animator> ();
+		audioSrc = GetComponent<AudioSource> ();
 	}
 	
 	// Update is called once per frame
@@ -72,6 +75,9 @@ public class PlayerInput : MonoBehaviour {
 				}
 				draggedBody = nearest;
 				if (draggedBody != null) { //if we grabbed someone
+					if (draggedBody.CompareTag("Human")) {
+						audioSrc.PlayOneShot (grab);
+					}
 					busy = true;
 					delayTime = waitTime;
 					//ignor collision and destroy their colliders
@@ -90,8 +96,11 @@ public class PlayerInput : MonoBehaviour {
 					if (script != null) { Destroy (script); }
 					Vision v = draggedBody.GetComponent<Vision>();
 					if (v!=null) { v.kill (); }
+					//set body to ignore raycasts
+					draggedBody.layer = LayerMask.NameToLayer ("Ignore Raycast");
 				}
 			} else if (draggedBody != null) { //drop the body
+				draggedBody.layer = 0;
 				if (van.kill (draggedBody)) { //try to drop them in the van
 					targets.Remove (draggedBody); //remove them from the list of things that can be grabbed
 					Destroy (draggedBody);

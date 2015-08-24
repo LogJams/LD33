@@ -5,11 +5,12 @@ using System.Collections;
 public class Behavior : MonoBehaviour {
 	Vision vision;
 	public bool isPolice = false;
-	public float timeBetweenActions = 15f;
+	public float timeBetweenActions = 5f;
 	float detectDelay = 0.25f;
 	bool detectSoundPlayed = false;
 
 	public AudioClip scream;
+	public AudioClip gunshot;
 
 	AudioSource sound;
 
@@ -19,8 +20,6 @@ public class Behavior : MonoBehaviour {
 	public static bool policeFrenzy = false;
 
 	bool running;
-
-	float rotSpeed = 2;//rotation speed
 
 	LevelManager manager;
 	// Use this for initialization
@@ -38,22 +37,22 @@ public class Behavior : MonoBehaviour {
 			timeSinceLastAction += Time.deltaTime;
 			if (vision.inMain == true && timeSinceLastAction > timeBetweenActions) {
 				timeSinceDetection += Time.deltaTime;
-				if (timeSinceDetection > detectDelay){
-					Detect (vision.getTag());
+				if (timeSinceDetection > detectDelay) {
+					Detect (vision.getTag ());
 					timeSinceDetection = 0f;
 					detectSoundPlayed = false;
-				}else if (!detectSoundPlayed) {
+				} else if (!detectSoundPlayed) {
 					//play detect sound
 					detectSoundPlayed = true;
 				}
 			} else if (vision.inPeripheral == true || vision.inMain == true) {
 				TurnToInvestigate ();
 				detectSoundPlayed = false;
-			} else if (vision.inMain == false) {
-				detectSoundPlayed = false;
-			} else{
-				detectSoundPlayed = false;
+			}else {
+				GetComponent<MoveBetweenPoints> ().angleOverride = 1000;
 			}
+		} else {
+			GetComponent<MoveBetweenPoints> ().angleOverride = 1000;
 		}
 	}
 
@@ -72,6 +71,7 @@ public class Behavior : MonoBehaviour {
 			// detect player, you lose
 			Debug.Log("POLICE: Hey, that's a monster!");
 			GameInfo.loseCondition = GameInfo.LoseCondition.PoliceCaught;
+				sound.PlayOneShot(gunshot);
 			manager.beginFade(true);
 			} else {
 				Behavior.policeFrenzy = true;
@@ -111,7 +111,7 @@ public class Behavior : MonoBehaviour {
 		// get angle of vision and compare between main and peripheral angles to determine what form of vision is being used
 		// raycast accordingly
 		float angle = Mathf.Rad2Deg * Mathf.Atan2 (sightVector.y, sightVector.x);
-		transform.rotation = Quaternion.Lerp (transform.rotation, Quaternion.Euler (new Vector3 (0, 0, angle)), Time.deltaTime * rotSpeed);;
+		GetComponent<MoveBetweenPoints> ().angleOverride = angle;
 	}
 
 }

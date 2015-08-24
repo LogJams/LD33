@@ -7,6 +7,8 @@ public class MoveBetweenPoints : MonoBehaviour {
 	public enum MoveType{patrol, pass, wait};
 	public MoveType moveType;
 
+	public float angleOverride = 1000;
+
 	//used to "ping-pong" loop movement
 	public bool patrolReverse;
 	//if the NPC is running away
@@ -118,8 +120,13 @@ public class MoveBetweenPoints : MonoBehaviour {
 				body.MovePosition (transform.position + velocity * Time.fixedDeltaTime);
 			}
 		}
-		//rotate toward the desired value
-		transform.rotation = Quaternion.Lerp (transform.rotation, Quaternion.Euler (0, 0, desiredRot), Time.fixedDeltaTime * rotSpeed);
+		if (angleOverride > 361) {
+			//rotate toward the desired value
+			transform.rotation = Quaternion.Lerp (transform.rotation, Quaternion.Euler (0, 0, desiredRot), Time.fixedDeltaTime * rotSpeed);
+		} else {
+			Debug.Log (angleOverride + ", " + (angleOverride < 361));
+			transform.rotation = Quaternion.Lerp (transform.rotation, Quaternion.Euler (0, 0, angleOverride), Time.fixedDeltaTime * rotSpeed);
+		}
 	}
 
 	void GetPath(){
